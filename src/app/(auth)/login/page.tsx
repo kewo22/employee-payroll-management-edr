@@ -33,7 +33,6 @@ const Login = (props: LoginProps) => {
     });
 
     const onSubmit = async (values: z.infer<typeof LogInSchema>) => {
-        // router.push('menu');
         await signIn("credentials", {
             email: values.email,
             password: values.password,

@@ -9,7 +9,6 @@ export const LogInSchema = z.object({
         }),
 });
 
-
 export const SignUpSchema = z.object({
     name: z.string().trim().min(1, { message: "Required" }),
     email: z
@@ -25,3 +24,11 @@ export const SignUpSchema = z.object({
     message: "Passwords don't match",
     path: ["confirmPassword"], // path of error
 });
+
+export const EmployeeSchema = z.object({
+    name: z.string().trim().min(1, { message: "Required" }),
+    joiningDate: z.string().trim().min(1, { message: "Required" }),
+    basicSalary: z.string().trim().min(1, { message: "Required" }),
+    salaryAllowance: z.string().trim().min(1, { message: "Required" }),
+});
+

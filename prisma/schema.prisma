@@ -19,3 +19,11 @@ model Organization {
   name           String
   hashedPassword String
 }
+
+model Employee {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  joiningDate    DateTime
+  basicSalary    String
+  salaryAllowance String
+}
