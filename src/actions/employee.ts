@@ -41,3 +41,16 @@ export async function editEmployee(id: string, employee: EmployeeValidatePayload
         return { message: "Failed to edit employee", isSuccess: false };
     }
 }
+
+export async function DeleteEmployee(id: string): Promise<ApiResponse> {
+    try {
+        await db.employee.delete({
+            where: {
+                id
+            }
+        })
+        return { message: `Employee Deleted`, isSuccess: true };
+    } catch (e) {
+        return { message: "Failed to delete employee", isSuccess: false };
+    }
+}
