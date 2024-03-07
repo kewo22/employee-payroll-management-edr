@@ -8,8 +8,6 @@ import { db } from '@/lib/db';
 
 export async function createOrganization(organization: CreateOrganizationValidatePayload) {
     const saltRounds = 10;
-    const myPlaintextPassword = organization.name + Date.now();
-
     const salt = bcrypt.genSaltSync(saltRounds);
     const hash = bcrypt.hashSync(organization.password, salt);
 
@@ -17,6 +15,7 @@ export async function createOrganization(organization: CreateOrganizationValidat
         email: organization.email,
         name: organization.name,
         hashedPassword: hash,
+        processingDate: null
     }
 
     try {

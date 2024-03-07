@@ -26,4 +26,5 @@ model Employee {
   joiningDate    DateTime
   basicSalary    String
   salaryAllowance String
+  processingDate String?
 }

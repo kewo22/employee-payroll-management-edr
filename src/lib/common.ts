@@ -17,7 +17,7 @@ export const DateToShadInputString = (date: Date) => {
     return `${y}-${m}-${d}`
 }
 
-export const Fetcher = (url: string) => fetch(url).then((res) => res.json());
+export const Fetcher = (url: string): Promise<any | null> => { return fetch(url).then((res) => res.json()) };
 
 export const ToAed = new Intl.NumberFormat('en-US', {
     style: 'currency',

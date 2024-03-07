@@ -12,7 +12,7 @@ import { Fetcher } from "@/lib/common";
 const Employees = () => {
     const router = useRouter();
 
-    const { data: employees, error, isLoading } = useSWR<Employee[]>(
+    const { data: employees, error, isLoading } = useSWR<Employee[] | null>(
         "/api/employee",
         Fetcher,
         {
