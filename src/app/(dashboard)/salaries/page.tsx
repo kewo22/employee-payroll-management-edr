@@ -20,7 +20,7 @@ const Salaries = () => {
     return (
         <div className="p-10">
             <h1 className="text-2xl font-bold">Salaries</h1>
-            <SalariesTable employees={employees} isLoading={isLoading} />
+            {/* <SalariesTable employees={employees} isLoading={isLoading} /> */}
         </div>
     );
 };
