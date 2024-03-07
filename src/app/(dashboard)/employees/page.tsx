@@ -31,7 +31,10 @@ const Employees = () => {
                 <h1 className="text-2xl font-bold">Employees</h1>
                 <Button onClick={onAddEmployeeClick}> Add Employee </Button>
             </div>
-            <EmployeeTable employees={employees} isLoading={isLoading} />
+            {
+                employees && <EmployeeTable employees={employees} isLoading={isLoading} />
+            }
+
         </div>
     );
 };
