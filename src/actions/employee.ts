@@ -5,6 +5,8 @@ import { db } from '@/lib/db';
 import { EmployeeValidatePayload } from '@/app/(dashboard)/employees/_components/form';
 import { StringToDate } from '@/lib/common';
 import { ApiResponse } from '@/types/api-respose';
+import { Employee } from '@prisma/client';
+import { EmployeeUploadPayload } from '@/types/empoyee-update-payload';
 
 export async function createEmployee(employee: EmployeeValidatePayload): Promise<ApiResponse> {
     const employeeObj = {
@@ -49,7 +51,27 @@ export async function DeleteEmployee(id: string): Promise<ApiResponse> {
                 id
             }
         })
-        return { message: `Employee Deleted`, isSuccess: true };
+        return { message: `Employee deleted successfully`, isSuccess: true };
+    } catch (e) {
+        return { message: "Failed to delete employee", isSuccess: false };
+    }
+}
+
+export async function UpdateEmployee(id: string, data: EmployeeUploadPayload): Promise<ApiResponse<Employee>> {
+    try {
+        const employee = await db.employee.update({
+            where: {
+                id
+            },
+            data: {
+                name: data.name,
+                joiningDate: data.joiningDate,
+                basicSalary: data.basicSalary,
+                salaryAllowance: data.salaryAllowance,
+                processingDate: data.processingDate,
+            }
+        })
+        return { message: `Employee updated successfully`, isSuccess: true, data: employee };
     } catch (e) {
         return { message: "Failed to delete employee", isSuccess: false };
     }

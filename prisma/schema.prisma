@@ -21,10 +21,10 @@ model Organization {
 }
 
 model Employee {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
-  name           String
-  joiningDate    DateTime
-  basicSalary    String
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  joiningDate     DateTime
+  basicSalary     String
   salaryAllowance String
-  processingDate String?
+  processingDate  DateTime?
 }

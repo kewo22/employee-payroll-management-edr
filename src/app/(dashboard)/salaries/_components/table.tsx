@@ -12,6 +12,8 @@ import { ToAed } from "@/lib/common";
 import { EmployeeTableProps } from "@/types/employee-tale-props";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
+import { UpdateEmployee } from "@/actions/employee";
+import { EmployeeUploadPayload } from "@/types/empoyee-update-payload";
 
 const SalariesTable = (props: EmployeeTableProps) => {
     const { employees, isLoading } = props;
@@ -23,7 +25,7 @@ const SalariesTable = (props: EmployeeTableProps) => {
 
     const [employeesView, setEmployeesView] = useState<Employee[] | null | undefined>(employees);
 
-    const [date, setDate] = useState<Date | undefined>(new Date())
+    const [processingDate, setProcessingDate] = useState<Date | undefined>(new Date())
 
     const employeeRef = useRef<Employee | null>(null);
 
@@ -66,12 +68,34 @@ const SalariesTable = (props: EmployeeTableProps) => {
         )
     }
 
-    const onSetClick = () => {
+    const onSetClick = (employee: Employee) => {
+        employeeRef.current = employee;
         setSalaryProcessingDialogIsOpen(true)
     }
 
-    const onSelectSalaryProcessingDate = () => {
-        setSalaryProcessingDialogIsOpen(true)
+    const onSelectSalaryProcessingDate = async () => {
+        console.log(processingDate)
+        if (!employeeRef || !employeeRef.current || !processingDate) return
+        const employeeUploadPayload: EmployeeUploadPayload = {
+            basicSalary: employeeRef.current.basicSalary,
+            joiningDate: employeeRef.current.joiningDate,
+            name: employeeRef.current.name,
+            processingDate: processingDate,
+            salaryAllowance: employeeRef.current.salaryAllowance,
+        }
+        const res = await UpdateEmployee(employeeRef.current.id, employeeUploadPayload)
+        if (res.isSuccess && res.data) {
+            const employeeClone = [...employeesView]
+            const foundEmployeeIndex = employees.findIndex(employee => {
+                return employee.id === res.data!.id
+            })
+            if (foundEmployeeIndex !== -1) {
+                employeeClone.splice(foundEmployeeIndex, 1, res.data)
+                setEmployeesView(employeeClone)
+                setProcessingDate(undefined)
+            }
+        }
+        setSalaryProcessingDialogIsOpen(false)
     }
 
     return (
@@ -85,8 +109,8 @@ const SalariesTable = (props: EmployeeTableProps) => {
                     <div className="mb-5">
                         <Calendar
                             mode="single"
-                            selected={date}
-                            onSelect={setDate}
+                            selected={processingDate}
+                            onSelect={setProcessingDate}
                             className="rounded-md border"
                         />
                     </div>
@@ -96,15 +120,16 @@ const SalariesTable = (props: EmployeeTableProps) => {
                             onClick={() => {
                                 setSalaryProcessingDialogIsOpen(false);
                             }}
+                            variant="secondary"
                         >
                             Cancel
                         </Button>
                         <Button
                             type="button"
-                            variant="destructive"
+                            variant="default"
                             onClick={onSelectSalaryProcessingDate}
                         >
-                            Delete
+                            Set
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -132,7 +157,10 @@ const SalariesTable = (props: EmployeeTableProps) => {
                                     <TableCell>{ToAed.format(+employee.salaryAllowance)}</TableCell>
                                     <TableCell>
                                         {employee.processingDate ? new Date(employee.processingDate).toDateString() : '-'}
-                                        <Button variant="link" size="sm" onClick={onSetClick}>Set</Button></TableCell>
+                                        <Button variant="link" size="sm" onClick={() => { onSetClick(employee) }}>
+                                            {employee.processingDate ? 'Change' : 'Set'}
+                                        </Button>
+                                    </TableCell>
                                     <TableCell>
                                         {/* <Button size="icon" variant="ghost" onClick={() => { onEditClick(employee) }}><PencilIcon className="h-4 w-4" /></Button> */}
                                         {/* <Button size="icon" variant="destructive" onClick={() => { onDeleteClick(employee) }}><TrashIcon className="h-4 w-4" /></Button> */}

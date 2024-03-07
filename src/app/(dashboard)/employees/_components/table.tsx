@@ -120,6 +120,7 @@ const EmployeeTable = (props: EmployeeTableProps) => {
                             onClick={() => {
                                 setDeleteConfirmationDialogIsOpen(false);
                             }}
+                            variant="secondary"
                         >
                             Cancel
                         </Button>
