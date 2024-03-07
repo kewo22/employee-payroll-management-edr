@@ -19,11 +19,12 @@ import {
 } from "@/components/ui/form";
 
 import { EmployeeSchema } from "@/lib/validation-schemas";
-import { createEmployee } from "@/actions/create-employee";
+import { createEmployee, editEmployee } from "@/actions/employee";
 
 import { cn } from "@/lib/utils";
 import { EmployeeFormProps } from "@/types/employee-form-props";
-import { DateToShadInputString } from "@/lib/common";
+import { DateToShadInputString, ShowToast } from "@/lib/common";
+import { ApiResponse } from "@/types/api-respose";
 
 export type EmployeeValidatePayload = z.infer<typeof EmployeeSchema>;
 
@@ -44,34 +45,41 @@ const EmployeeForm = (props: EmployeeFormProps) => {
     });
 
     const onSubmit = async (values: z.infer<typeof EmployeeSchema>) => {
+        if (!employee) {
+            create(values)
+        }
+        if (employee) {
+            edit(values)
+        }
+    };
+
+    const create = async (values: z.infer<typeof EmployeeSchema>) => {
         const res = await createEmployee(values);
-        if (res.error) {
-            toast({
-                className: cn(
-                    "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
-                ),
-                title: "Error from server",
-                description: res.error,
-                variant: "destructive",
-            });
-        } else {
+        const title = res.isSuccess ? "Success" : "Error"
+        ShowToast(toast, title, res.message, "success")
+        if (res.isSuccess) {
             form.reset({
                 name: "",
                 joiningDate: "",
                 basicSalary: "",
                 salaryAllowance: ""
             })
-            toast({
-                className: cn(
-                    "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-500 text-white"
-                ),
-                title: "Success",
-                description: res.message,
-                variant: "default",
-            });
             router.push("/employees");
         }
-    };
+    }
+
+    const edit = async (values: z.infer<typeof EmployeeSchema>) => {
+        if (!Object.entries(form.formState.dirtyFields).length) {
+            ShowToast(toast, 'Info', "Nothing to edit", "success")
+            return;
+        }
+        if (!employee) return
+        const res = await editEmployee(employee.id, values)
+        const title = res.isSuccess ? "Success" : "Error"
+        const type = res.isSuccess ? "success" : "fail"
+        ShowToast(toast, title, res.message, type)
+        router.push("/employees");
+    }
 
     return (
         <Form {...form}>

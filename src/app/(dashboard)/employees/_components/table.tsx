@@ -79,8 +79,8 @@ const EmployeeTable = (props: EmployeeTableProps) => {
                                     <TableCell>{ToAed.format(+employee.basicSalary)}</TableCell>
                                     <TableCell>{ToAed.format(+employee.salaryAllowance)}</TableCell>
                                     <TableCell>
-                                        <Button variant="ghost" onClick={() => { onEditClick(employee) }}><PencilIcon className="h-5 w-5" /></Button>
-                                        <Button variant="ghost"><TrashIcon className="h-5 w-5" /></Button>
+                                        <Button size="icon" variant="ghost" onClick={() => { onEditClick(employee) }}><PencilIcon className="h-4 w-4" /></Button>
+                                        <Button size="icon" variant="destructive"><TrashIcon className="h-4 w-4" /></Button>
                                     </TableCell>
                                 </TableRow>
                             )

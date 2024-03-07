@@ -14,7 +14,7 @@ const EditEmployee = ({ params }: { params: { id: string } }) => {
         `/api/employee/${params.id}`,
         Fetcher,
         {
-            revalidateOnFocus: false,
+            revalidateOnFocus: true,
         }
     );
 

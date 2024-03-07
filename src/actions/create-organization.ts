@@ -20,7 +20,7 @@ export async function createOrganization(organization: CreateOrganizationValidat
     }
 
     try {
-        const user = await db.organization.create({
+        await db.organization.create({
             data: organizationObj
         })
         return { message: `Organization created successfully` };
