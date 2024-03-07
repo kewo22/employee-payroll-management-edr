@@ -7,6 +7,7 @@ import type { Employee } from "@prisma/client";
 import EmployeeForm from "../../_components/form";
 
 import { Fetcher } from "@/lib/common";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const EditEmployee = ({ params }: { params: { id: string } }) => {
 
@@ -19,7 +20,9 @@ const EditEmployee = ({ params }: { params: { id: string } }) => {
     );
 
     if (!employee || isLoading) {
-        return <>Loading</>
+        return <div className="flex items-center justify-center text-2xl h-full">
+            <Skeleton className="w-fit p-5 rounded-md">Loading employee info</Skeleton>
+        </div>
     }
 
     return (
