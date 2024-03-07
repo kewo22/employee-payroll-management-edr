@@ -25,7 +25,7 @@ const EmployeeTable = (props: EmployeeTableProps) => {
     const [deleteConfirmationDialogIsOpen, setDeleteConfirmationDialogIsOpen] =
         useState(false);
 
-    const [employeesView, setEmployeesView] = useState<Employee[] | undefined>(employees);
+    const [employeesView, setEmployeesView] = useState<Employee[] | null | undefined>(employees);
 
     const employeeRef = useRef<Employee | null>(null);
 
