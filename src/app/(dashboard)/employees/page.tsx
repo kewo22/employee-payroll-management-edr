@@ -32,7 +32,7 @@ const Employees = () => {
                 <Button onClick={onAddEmployeeClick}> Add Employee </Button>
             </div>
             {
-                employees && <EmployeeTable employees={employees} isLoading={isLoading} />
+                // employees && <EmployeeTable employees={employees} isLoading={isLoading} />
             }
 
         </div>
