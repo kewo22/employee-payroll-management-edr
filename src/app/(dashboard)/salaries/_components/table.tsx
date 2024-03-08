@@ -163,7 +163,7 @@ const SalariesTable = (props: EmployeeTableProps) => {
             <Dialog open={salaryProcessingDialogIsOpen}>
                 <DialogContent className="sm:max-w-[330px]">
                     <DialogHeader>
-                        <DialogTitle>Select salary processing date ?</DialogTitle>
+                        <DialogTitle>Select salary processing date</DialogTitle>
                     </DialogHeader>
                     <div className="mb-5">
                         <Calendar
@@ -211,13 +211,13 @@ const SalariesTable = (props: EmployeeTableProps) => {
                         employeesView.map((employee, i) => {
                             return (
                                 <TableRow key={`employee-${i}`}>
-                                    <TableCell>{employee.name}</TableCell>
-                                    <TableCell>{ToAed.format(+employee.basicSalary)}</TableCell>
-                                    <TableCell>{ToAed.format(+employee.salaryAllowance)}</TableCell>
-                                    <TableCell className="w-64">
-                                        {employee.processingDate ? new Date(employee.processingDate).toDateString() : '-'}
+                                    <TableCell className="w-40">{employee.name}</TableCell>
+                                    <TableCell className="w-28">{ToAed.format(+employee.basicSalary)}</TableCell>
+                                    <TableCell className="w-28">{ToAed.format(+employee.salaryAllowance)}</TableCell>
+                                    <TableCell className="w-52">
+                                        {/* {employee.processingDate ? new Date(employee.processingDate).toDateString() : '-'} */}
                                         <Button variant="link" size="sm" onClick={() => { onSetClick(employee) }}>
-                                            {employee.processingDate ? 'Change' : 'Set'}
+                                            {employee.processingDate ? new Date(employee.processingDate).toDateString() : 'Set date'}
                                         </Button>
                                     </TableCell>
                                     <TableCell className="w-28">
