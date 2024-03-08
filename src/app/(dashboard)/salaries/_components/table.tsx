@@ -1,19 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import type { Employee } from "@prisma/client";
+import debounce from "lodash/debounce";
 
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-
-import { ToAed } from "@/lib/common";
-import { EmployeeTableProps } from "@/types/employee-tale-props";
+import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
+
 import { UpdateEmployee } from "@/actions/employee";
+
+import { EmployeeTableProps } from "@/types/employee-tale-props";
 import { EmployeeUploadPayload } from "@/types/empoyee-update-payload";
+
+import { ToAed } from "@/lib/common";
+import { EmployeeSalaryProcess } from "@/types/employee-salary-process";
 
 const SalariesTable = (props: EmployeeTableProps) => {
     const { employees, isLoading } = props;
@@ -23,16 +28,20 @@ const SalariesTable = (props: EmployeeTableProps) => {
     const [salaryProcessingDialogIsOpen, setSalaryProcessingDialogIsOpen] =
         useState(false);
 
-    const [employeesView, setEmployeesView] = useState<Employee[] | null | undefined>(employees);
+    const [employeesView, setEmployeesView] = useState<EmployeeSalaryProcess[]>([]);
 
     const [processingDate, setProcessingDate] = useState<Date | undefined>(new Date())
 
     const employeeRef = useRef<Employee | null>(null);
 
-    const headers = ['Name', 'Basic Salary', 'Salary Allowance', 'Processing Date']
+    const headers = ['Name', 'Basic Salary', 'Salary Allowance', 'Processing Date', 'Additions', 'Deductions', 'Total Salary']
+
 
     useEffect(() => {
-        setEmployeesView(employees)
+        if (employees) {
+            const employeeSalaryProcess = mapEmployeesToSalaryProcessing(employees)
+            setEmployeesView(employeeSalaryProcess)
+        }
     }, [employees])
 
     if (!employees || !employeesView || isLoading) {
@@ -68,13 +77,21 @@ const SalariesTable = (props: EmployeeTableProps) => {
         )
     }
 
+    const mapEmployeesToSalaryProcessing = (employees: Employee[]) => {
+        const employeeSalaryProcess: EmployeeSalaryProcess[] = []
+        employees.forEach(employee => {
+            const totalSalary = (+employee.basicSalary + +employee.salaryAllowance).toString();
+            employeeSalaryProcess.push({ ...employee, additions: 0, deductions: 0, totalSalary })
+        })
+        return employeeSalaryProcess;
+    }
+
     const onSetClick = (employee: Employee) => {
         employeeRef.current = employee;
         setSalaryProcessingDialogIsOpen(true)
     }
 
     const onSelectSalaryProcessingDate = async () => {
-        console.log(processingDate)
         if (!employeeRef || !employeeRef.current || !processingDate) return
         const employeeUploadPayload: EmployeeUploadPayload = {
             basicSalary: employeeRef.current.basicSalary,
@@ -90,13 +107,55 @@ const SalariesTable = (props: EmployeeTableProps) => {
                 return employee.id === res.data!.id
             })
             if (foundEmployeeIndex !== -1) {
-                employeeClone.splice(foundEmployeeIndex, 1, res.data)
+                const employeeSalaryProcess: EmployeeSalaryProcess = {
+                    ...res.data,
+                    additions: 0,
+                    deductions: 0,
+                    totalSalary: "0"
+                }
+                employeeClone.splice(foundEmployeeIndex, 1, employeeSalaryProcess)
                 setEmployeesView(employeeClone)
                 setProcessingDate(undefined)
             }
         }
         setSalaryProcessingDialogIsOpen(false)
     }
+
+    const onAdditionsChange = (_employee: Employee, e: ChangeEvent<HTMLInputElement>, index: number) => {
+        const employeeClone = [...employeesView]
+        const foundEmployee = employeesView.find(employee => {
+            return employee.id === _employee.id
+        })
+        if (foundEmployee) {
+            let foundEmployeeClone = { ...foundEmployee };
+            let totalSalary = foundEmployeeClone.basicSalary + foundEmployee.salaryAllowance;
+            let additions = 0;
+            const valueToAdd = e.target.value ? parseFloat(e.target.value) : 0
+            totalSalary = ((parseFloat(foundEmployeeClone.basicSalary) + parseFloat(foundEmployee.salaryAllowance) + valueToAdd) - foundEmployeeClone.deductions).toString();
+            foundEmployeeClone = { ...foundEmployeeClone, additions: parseFloat(e.target.value || "0"), totalSalary }
+            employeeClone.splice(index, 1, foundEmployeeClone)
+            setEmployeesView(employeeClone)
+        }
+    }
+
+    const additionsDebouncedOnChange = debounce(onAdditionsChange, 1000);
+
+    const onDeductionsChange = (_employee: Employee, e: ChangeEvent<HTMLInputElement>, index: number) => {
+        const employeeClone = [...employeesView]
+        const foundEmployee = employeesView.find(employee => {
+            return employee.id === _employee.id
+        })
+        if (foundEmployee) {
+            let foundEmployeeClone = { ...foundEmployee };
+            let totalSalary = foundEmployeeClone.basicSalary + foundEmployee.salaryAllowance;
+            const valueToDeduct = e.target.value ? parseFloat(e.target.value) : 0
+            totalSalary = ((parseFloat(foundEmployeeClone.basicSalary) + parseFloat(foundEmployee.salaryAllowance) - valueToDeduct) + foundEmployeeClone.additions).toString();
+            foundEmployeeClone = { ...foundEmployeeClone, deductions: parseFloat(e.target.value || "0"), totalSalary }
+            employeeClone.splice(index, 1, foundEmployeeClone)
+            setEmployeesView(employeeClone)
+        }
+    }
+    const deductionsDebouncedOnChange = debounce(onDeductionsChange, 1000);
 
     return (
         <div className="w-full">
@@ -155,11 +214,20 @@ const SalariesTable = (props: EmployeeTableProps) => {
                                     <TableCell>{employee.name}</TableCell>
                                     <TableCell>{ToAed.format(+employee.basicSalary)}</TableCell>
                                     <TableCell>{ToAed.format(+employee.salaryAllowance)}</TableCell>
-                                    <TableCell>
+                                    <TableCell className="w-64">
                                         {employee.processingDate ? new Date(employee.processingDate).toDateString() : '-'}
                                         <Button variant="link" size="sm" onClick={() => { onSetClick(employee) }}>
                                             {employee.processingDate ? 'Change' : 'Set'}
                                         </Button>
+                                    </TableCell>
+                                    <TableCell className="w-28">
+                                        <Input type="number" inputMode="numeric" onChange={(e) => { additionsDebouncedOnChange(employee, e, i) }} />
+                                    </TableCell>
+                                    <TableCell className="w-28">
+                                        <Input type="number" inputMode="numeric" onChange={(e) => { deductionsDebouncedOnChange(employee, e, i) }} />
+                                    </TableCell>
+                                    <TableCell className="w-28">
+                                        {ToAed.format(+employee.totalSalary)}
                                     </TableCell>
                                     <TableCell>
                                         {/* <Button size="icon" variant="ghost" onClick={() => { onEditClick(employee) }}><PencilIcon className="h-4 w-4" /></Button> */}
