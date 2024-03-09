@@ -49,7 +49,7 @@ const Login = (props: LoginProps) => {
     return (
         <AuthTemplate type="login">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" autoComplete="off">
                     <div className="mb-4 relative">
                         <FormField
                             control={form.control}

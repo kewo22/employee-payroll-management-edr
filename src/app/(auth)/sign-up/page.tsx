@@ -67,6 +67,7 @@ const SignUp = (props: LoginProps) => {
                 description: res.message,
                 variant: "default",
             });
+            router.push('/login')
         }
 
     };
@@ -81,6 +82,7 @@ const SignUp = (props: LoginProps) => {
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="flex flex-col gap-5"
+                    autoComplete="off"
                 >
                     <FormField
                         control={form.control}
