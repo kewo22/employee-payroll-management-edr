@@ -94,7 +94,7 @@ const Login = (props: LoginProps) => {
                         />
                     </div>
                     <div className="flex justify-between items-center">
-                        <Button variant="outline" type="submit">Submit</Button>
+                        <Button variant="outline" type="submit">Login</Button>
                         <Button type="button" variant="link" className="text-slate-700" onClick={onSignUpClick}>Don&apos;t have an account? SignUp</Button>
                     </div>
                     {
