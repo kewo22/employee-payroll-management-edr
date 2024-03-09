@@ -15,7 +15,6 @@ export async function createOrganization(organization: CreateOrganizationValidat
         email: organization.email,
         name: organization.name,
         hashedPassword: hash,
-        processingDate: null
     }
 
     try {
