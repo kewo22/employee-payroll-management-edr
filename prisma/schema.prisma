@@ -28,3 +28,13 @@ model Employee {
   salaryAllowance String
   processingDate  DateTime?
 }
+
+model SalaryProcess {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String
+  basicSalary     String
+  salaryAllowance String
+  addtitons       String
+  deductions      String
+  processingDate  DateTime?
+}

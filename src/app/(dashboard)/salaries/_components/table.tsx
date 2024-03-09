@@ -8,6 +8,15 @@ import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -19,6 +28,7 @@ import { EmployeeUploadPayload } from "@/types/empoyee-update-payload";
 
 import { ToAed } from "@/lib/common";
 import { EmployeeSalaryProcess } from "@/types/employee-salary-process";
+import { MoreHorizontal } from "lucide-react";
 
 const SalariesTable = (props: EmployeeTableProps) => {
     const { employees, isLoading } = props;
@@ -157,6 +167,10 @@ const SalariesTable = (props: EmployeeTableProps) => {
     }
     const deductionsDebouncedOnChange = debounce(onDeductionsChange, 1000);
 
+    const onSalaryProcessClick = () => {
+        alert('ss')
+    }
+
     return (
         <div className="w-full">
 
@@ -220,16 +234,34 @@ const SalariesTable = (props: EmployeeTableProps) => {
                                             {employee.processingDate ? new Date(employee.processingDate).toDateString() : 'Set date'}
                                         </Button>
                                     </TableCell>
-                                    <TableCell className="w-28">
+                                    <TableCell className="w-20">
                                         <Input type="number" inputMode="numeric" onChange={(e) => { additionsDebouncedOnChange(employee, e, i) }} />
                                     </TableCell>
-                                    <TableCell className="w-28">
+                                    <TableCell className="w-20">
                                         <Input type="number" inputMode="numeric" onChange={(e) => { deductionsDebouncedOnChange(employee, e, i) }} />
                                     </TableCell>
                                     <TableCell className="w-28">
                                         {ToAed.format(+employee.totalSalary)}
                                     </TableCell>
                                     <TableCell>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                                    <span className="sr-only">Open menu</span>
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent className="w-56">
+                                                <DropdownMenuLabel>More actions</DropdownMenuLabel>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem onClick={onSalaryProcessClick}>
+                                                    Process Salary
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    End of service
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                         {/* <Button size="icon" variant="ghost" onClick={() => { onEditClick(employee) }}><PencilIcon className="h-4 w-4" /></Button> */}
                                         {/* <Button size="icon" variant="destructive" onClick={() => { onDeleteClick(employee) }}><TrashIcon className="h-4 w-4" /></Button> */}
                                     </TableCell>
