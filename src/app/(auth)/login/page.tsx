@@ -37,7 +37,7 @@ const Login = (props: LoginProps) => {
             email: values.email,
             password: values.password,
             redirect: true,
-            callbackUrl: "/dashboard",
+            callbackUrl: "/employees",
         });
     };
 
