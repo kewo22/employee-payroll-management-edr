@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-
+import { useRouter } from "next/navigation";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -23,11 +23,13 @@ import { SignUpSchema } from "@/lib/validation-schemas";
 import { createOrganization } from "@/actions/create-organization";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import AuthTemplate from "../_template";
 
 export type CreateOrganizationValidatePayload = z.infer<typeof SignUpSchema>;
 
 const SignUp = (props: LoginProps) => {
     const { toast } = useToast();
+    const router = useRouter();
 
     const form = useForm<CreateOrganizationValidatePayload>({
         resolver: zodResolver(SignUpSchema),
@@ -69,9 +71,12 @@ const SignUp = (props: LoginProps) => {
 
     };
 
-    return (
+    const onLoginClick = () => {
+        router.push('/login')
+    }
 
-        <div className="w-96">
+    return (
+        <AuthTemplate type="sign-up">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -136,11 +141,13 @@ const SignUp = (props: LoginProps) => {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit">Submit</Button>
+                    <div className="flex justify-between items-center">
+                        <Button variant="outline" type="submit">Submit</Button>
+                        <Button type="button" variant="link" className="text-slate-700" onClick={onLoginClick}>Already have an account? Login</Button>
+                    </div>
                 </form>
             </Form>
-        </div>
-
+        </AuthTemplate>
     );
 };
 

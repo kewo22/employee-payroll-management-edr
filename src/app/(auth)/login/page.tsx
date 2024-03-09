@@ -20,10 +20,11 @@ import {
     Form,
 } from "@/components/ui/form";
 import { LogInSchema } from "@/lib/validation-schemas";
+import AuthTemplate from "../_template";
 
 const Login = (props: LoginProps) => {
-    console.log("🚀 ~ Login ~ props:", props.searchParams)
-    
+    const router = useRouter();
+
     const form = useForm<z.infer<typeof LogInSchema>>({
         resolver: zodResolver(LogInSchema),
         defaultValues: {
@@ -41,75 +42,72 @@ const Login = (props: LoginProps) => {
         });
     };
 
-    return (
-        <div className="bg-gray-100 flex items-center justify-center h-screen">
-            <div className="bg-slate-200 p-8 rounded shadow-md w-96">
-                <h2 className="text-4xl font-semibold mb-6 text-center text-black-950 uppercase">
-                    Employee Payroll Login
-                </h2>
-                <h1 className="text-sm font-semibold mb-6 text-center">
-                    Please enter your Email & Password
-                </h1>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <div className="mb-4 relative">
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-black">Email</FormLabel>
-                                        <FormControl>
-                                            <div className="relative">
-                                                <Input
-                                                    placeholder="example@mail.com"
-                                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 text-center"
-                                                    {...field}
-                                                // value={email}
-                                                // onChange={(e) => setEmail(e.target.value)}
-                                                // onClick={handleInputClick}
-                                                />
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage className="text-red-950 font-bold" />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                        <div className="mb-4 relative">
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-black">Password</FormLabel>
-                                        <FormControl>
-                                            <div className="relative">
-                                                <Input
-                                                    type="password"
-                                                    placeholder="your secured password"
-                                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 text-center"
-                                                    {...field}
-                                                />
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage className="text-red-950 font-bold" />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                        <Button type="submit">Submit</Button>
-                        {
-                            props && props.searchParams &&
-                            <div className="text-destructive font-bold">
-                                {props.searchParams.error}
-                            </div>
+    const onSignUpClick = async () => {
+        router.push('/sign-up')
+    };
 
-                        }
-                    </form>
-                </Form>
-            </div>
-        </div>
+    return (
+        <AuthTemplate type="login">
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <div className="mb-4 relative">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-slate-700">Email</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <Input
+                                                placeholder="example@mail.com"
+                                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 text-center"
+                                                {...field}
+                                            />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage className="text-red-950 font-bold" />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <div className="mb-4 relative">
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-slate-700">Password</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <Input
+                                                type="password"
+                                                placeholder="your secured password"
+                                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 text-center"
+                                                {...field}
+                                            />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage className="text-red-950 font-bold" />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <Button variant="outline" type="submit">Submit</Button>
+                        <Button type="button" variant="link" className="text-slate-700" onClick={onSignUpClick}>Don't have an account? SignUp</Button>
+                    </div>
+                    {
+                        props && props.searchParams && props.params.error &&
+                        <div className="text-destructive font-bold">
+                            {props.searchParams.error}
+                        </div>
+
+                    }
+                </form>
+            </Form>
+        </AuthTemplate>
+
     );
 };
 
