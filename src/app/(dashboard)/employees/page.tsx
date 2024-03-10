@@ -8,6 +8,7 @@ import type { Employee } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import EmployeeTable from "./_components/table";
 import { Fetcher } from "@/lib/common";
+import Template from "../_components/Template";
 
 const Employees = () => {
     const router = useRouter();
@@ -26,16 +27,9 @@ const Employees = () => {
     }
 
     return (
-        <div className="p-10">
-            <div className="mb-5 flex flex-row items-center justify-between">
-                <h1 className="text-2xl font-bold">Employees</h1>
-                <Button onClick={onAddEmployeeClick}> Add Employee </Button>
-            </div>
-            {
-                <EmployeeTable employees={employees} isLoading={isLoading} />
-            }
-
-        </div>
+        <Template title="Employees" actionBtnText="Add Employee" onActionClick={onAddEmployeeClick}>
+            <EmployeeTable employees={employees} isLoading={isLoading}  />
+        </Template>
     );
 };
 

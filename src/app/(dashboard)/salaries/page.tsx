@@ -6,6 +6,7 @@ import type { Employee } from "@prisma/client";
 
 import { Fetcher } from "@/lib/common";
 import SalariesTable from "./_components/table";
+import Template from "../_components/Template";
 
 const Salaries = () => {
 
@@ -18,10 +19,10 @@ const Salaries = () => {
     );
 
     return (
-        <div className="p-10">
-            <h1 className="text-2xl font-bold">Salaries</h1>
+        <Template title="Salaries">
             <SalariesTable employees={employees} isLoading={isLoading} />
-        </div>
+        </Template>
+
     );
 };
 
