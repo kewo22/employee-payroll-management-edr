@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import type { Employee } from "@prisma/client";
+import type { Employee, SalaryProcess } from "@prisma/client";
 import debounce from "lodash/debounce";
 
 import { useToast } from "@/components/ui/use-toast";
@@ -26,9 +26,10 @@ import { UpdateEmployee } from "@/actions/employee";
 import { EmployeeTableProps } from "@/types/employee-tale-props";
 import { EmployeeUploadPayload } from "@/types/empoyee-update-payload";
 
-import { ToAed } from "@/lib/common";
+import { ShowToast, ToAed } from "@/lib/common";
 import { EmployeeSalaryProcess } from "@/types/employee-salary-process";
 import { MoreHorizontal } from "lucide-react";
+import { CreateSalaryProcess } from "@/actions/salary";
 
 const SalariesTable = (props: EmployeeTableProps) => {
     const { employees, isLoading } = props;
@@ -167,8 +168,12 @@ const SalariesTable = (props: EmployeeTableProps) => {
     }
     const deductionsDebouncedOnChange = debounce(onDeductionsChange, 1000);
 
-    const onSalaryProcessClick = () => {
-        alert('ss')
+    const onSalaryProcessClick = async (employee: EmployeeSalaryProcess) => {
+        debugger
+        const res = await CreateSalaryProcess(employee)
+        const title = res.isSuccess ? "Success" : "Error"
+        const type = res.isSuccess ? "success" : "fail"
+        ShowToast(toast, title, res.message, type)
     }
 
     return (
@@ -229,7 +234,6 @@ const SalariesTable = (props: EmployeeTableProps) => {
                                     <TableCell className="w-28">{ToAed.format(+employee.basicSalary)}</TableCell>
                                     <TableCell className="w-28">{ToAed.format(+employee.salaryAllowance)}</TableCell>
                                     <TableCell className="w-52">
-                                        {/* {employee.processingDate ? new Date(employee.processingDate).toDateString() : '-'} */}
                                         <Button variant="link" size="sm" onClick={() => { onSetClick(employee) }}>
                                             {employee.processingDate ? new Date(employee.processingDate).toDateString() : 'Set date'}
                                         </Button>
@@ -254,7 +258,7 @@ const SalariesTable = (props: EmployeeTableProps) => {
                                             <DropdownMenuContent className="w-56">
                                                 <DropdownMenuLabel>More actions</DropdownMenuLabel>
                                                 <DropdownMenuSeparator />
-                                                <DropdownMenuItem onClick={onSalaryProcessClick}>
+                                                <DropdownMenuItem onClick={() => { onSalaryProcessClick(employee) }}>
                                                     Process Salary
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem>

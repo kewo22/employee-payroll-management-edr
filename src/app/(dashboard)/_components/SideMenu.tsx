@@ -15,7 +15,7 @@ export default function SideMenu() {
                 Employee Payroll System
             </div>
 
-            <div className="flex-grow w-full mx-10 text-white">
+            <div className="flex-grow mx-10 text-white">
                 <ul>
                     <li className="mb-2">
                         <Link href="/employees">Employees</Link>

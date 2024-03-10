@@ -21,20 +21,23 @@ model Organization {
 }
 
 model Employee {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
   name            String
   joiningDate     DateTime
   basicSalary     String
   salaryAllowance String
   processingDate  DateTime?
+  SalaryProcess   SalaryProcess[]
 }
 
 model SalaryProcess {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String
+  employeeId      String    @db.ObjectId
+  employee        Employee  @relation(fields: [employeeId], references: [id])
   basicSalary     String
   salaryAllowance String
-  addtitons       String
+  additions       String
   deductions      String
+  totalSalary     String
   processingDate  DateTime?
 }

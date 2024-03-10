@@ -54,7 +54,8 @@ const EmployeeForm = (props: EmployeeFormProps) => {
     const create = async (values: z.infer<typeof EmployeeSchema>) => {
         const res = await createEmployee(values);
         const title = res.isSuccess ? "Success" : "Error"
-        ShowToast(toast, title, res.message, "success")
+        const type = res.isSuccess ? "success" : "fail"
+        ShowToast(toast, title, res.message, type)
         if (res.isSuccess) {
             form.reset({
                 name: "",
