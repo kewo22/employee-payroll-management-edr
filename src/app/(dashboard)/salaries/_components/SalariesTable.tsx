@@ -29,6 +29,7 @@ import { EmployeeUpdatePayload } from "@/types/empoyee-update-payload";
 
 import { EmployeeSalaryProcess } from "@/types/employee-salary-process";
 import { ShowToast, ToAed, ToLocaleDateTime } from "@/lib/common";
+import { addToSalary, deductFromSalary } from "@/lib/utils";
 
 const SalariesTable = (props: EmployeeTableProps) => {
     const { employees, isLoading } = props;
@@ -109,9 +110,8 @@ const SalariesTable = (props: EmployeeTableProps) => {
         if (foundEmployee) {
             let foundEmployeeClone = { ...foundEmployee };
             let totalSalary = foundEmployeeClone.basicSalary + foundEmployee.salaryAllowance;
-            let additions = 0;
             const valueToAdd = e.target.value ? parseFloat(e.target.value) : 0
-            totalSalary = ((parseFloat(foundEmployeeClone.basicSalary) + parseFloat(foundEmployee.salaryAllowance) + valueToAdd) - foundEmployeeClone.deductions).toString();
+            totalSalary = addToSalary(foundEmployeeClone.basicSalary, foundEmployee.salaryAllowance, valueToAdd, foundEmployeeClone.deductions)
             foundEmployeeClone = { ...foundEmployeeClone, additions: parseFloat(e.target.value || "0"), totalSalary }
             employeeClone.splice(index, 1, foundEmployeeClone)
             setEmployeesView(employeeClone)
@@ -129,7 +129,7 @@ const SalariesTable = (props: EmployeeTableProps) => {
             let foundEmployeeClone = { ...foundEmployee };
             let totalSalary = foundEmployeeClone.basicSalary + foundEmployee.salaryAllowance;
             const valueToDeduct = e.target.value ? parseFloat(e.target.value) : 0
-            totalSalary = ((parseFloat(foundEmployeeClone.basicSalary) + parseFloat(foundEmployee.salaryAllowance) - valueToDeduct) + foundEmployeeClone.additions).toString();
+            totalSalary = deductFromSalary(foundEmployeeClone.basicSalary, foundEmployee.salaryAllowance, valueToDeduct, foundEmployeeClone.additions)
             foundEmployeeClone = { ...foundEmployeeClone, deductions: parseFloat(e.target.value || "0"), totalSalary }
             employeeClone.splice(index, 1, foundEmployeeClone)
             setEmployeesView(employeeClone)

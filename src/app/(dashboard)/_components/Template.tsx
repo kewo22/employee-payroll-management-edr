@@ -15,7 +15,7 @@ export default function Template(props: DashboardProps) {
         return (
             <div className={wrapperClasses}>
                 <div className="mb-5 flex flex-row items-center justify-between">
-                    <h1 className={titleClasses}>{title}</h1>
+                    <h1 data-testid="dashboard-heading" className={titleClasses}>{title}</h1>
                     {actionBtnText && onActionClick && <Button size="sm" onClick={onActionClick}> {actionBtnText} </Button>}
                 </div>
                 {children}
@@ -25,7 +25,7 @@ export default function Template(props: DashboardProps) {
 
     return (
         <div className={wrapperClasses}>
-            <h1 className={cn('mb-5', titleClasses)}>{title}</h1>
+            <h1 data-testid="dashboard-heading" className={cn('mb-5', titleClasses)}>{title}</h1>
             {children}
         </div>
     )
