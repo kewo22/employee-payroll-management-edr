@@ -2,7 +2,6 @@ import { ApiResponse } from "@/types/api-respose";
 import { cn } from "./utils";
 
 export const StringToDate = (date: string) => {
-    console.log("🚀 ~ StringToDate ~ date:", date)
     const splitted = date.split('-')
     const d = splitted[2].length === 1 ? `0${splitted[2]}` : splitted[2]
     const m = splitted[1].length === 1 ? `0${splitted[1]}` : splitted[1]

@@ -26,18 +26,19 @@ export async function createEmployee(employee: EmployeeValidatePayload): Promise
     }
 }
 
-export async function updateEmployee(employee: Employee, formValues: EmployeeUpdatePayload): Promise<ApiResponse<Employee>> {
+export async function updateEmployee(id: string, employeeUpdatePayload: EmployeeUpdatePayload): Promise<ApiResponse<Employee>> {
     try {
         const updatedEmployee = await db.employee.update({
             where: {
-                id: employee.id
+                id
             },
             data: {
-                name: formValues.name,
-                joiningDate: formValues.joiningDate,
-                basicSalary: formValues.basicSalary,
-                salaryAllowance: formValues.salaryAllowance,
-                isEndOfService: employee.isEndOfService
+                name: employeeUpdatePayload.name,
+                joiningDate: employeeUpdatePayload.joiningDate,
+                basicSalary: employeeUpdatePayload.basicSalary,
+                salaryAllowance: employeeUpdatePayload.salaryAllowance,
+                isEndOfService: employeeUpdatePayload.isEndOfService,
+                processingDate: employeeUpdatePayload.processingDate,
             }
         })
         return { message: `Employee edited successfully`, isSuccess: true, data: updatedEmployee };

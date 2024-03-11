@@ -82,7 +82,7 @@ const EmployeeForm = (props: EmployeeFormProps) => {
             processingDate: employee.processingDate,
             salaryAllowance: values.salaryAllowance
         }
-        const res = await updateEmployee(employee, employeeUpdatePayload)
+        const res = await updateEmployee(employee.id, employeeUpdatePayload)
         const title = res.isSuccess ? "Success" : "Error"
         const type = res.isSuccess ? "success" : "fail"
         ShowToast(toast, title, res.message, type)

@@ -28,7 +28,7 @@ import { EmployeeTableProps } from "@/types/employee-tale-props";
 import { EmployeeUpdatePayload } from "@/types/empoyee-update-payload";
 
 import { EmployeeSalaryProcess } from "@/types/employee-salary-process";
-import { ShowToast, ToAed } from "@/lib/common";
+import { ShowToast, ToAed, ToLocaleDateTime } from "@/lib/common";
 
 const SalariesTable = (props: EmployeeTableProps) => {
     const { employees, isLoading } = props;
@@ -77,14 +77,10 @@ const SalariesTable = (props: EmployeeTableProps) => {
     const onSelectSalaryProcessingDate = async () => {
         if (!employeeRef || !employeeRef.current || !processingDate) return
         const employeeUploadPayload: EmployeeUpdatePayload = {
-            basicSalary: employeeRef.current.basicSalary,
-            joiningDate: employeeRef.current.joiningDate,
-            name: employeeRef.current.name,
-            processingDate: processingDate,
-            salaryAllowance: employeeRef.current.salaryAllowance,
-            isEndOfService: employeeRef.current.isEndOfService
+            ...employeeRef.current,
+            processingDate: ToLocaleDateTime(processingDate),
         }
-        const res = await updateEmployee(employeeRef.current, employeeUploadPayload)
+        const res = await updateEmployee(employeeRef.current.id, employeeUploadPayload)
         if (res.isSuccess && res.data) {
             const employeeClone = [...employeesView]
             const foundEmployeeIndex = employees.findIndex(employee => {
@@ -142,6 +138,10 @@ const SalariesTable = (props: EmployeeTableProps) => {
     const deductionsDebouncedOnChange = debounce(onDeductionsChange, 1000);
 
     const onSalaryProcessClick = async (employee: EmployeeSalaryProcess) => {
+        if (employee.isEndOfService) {
+            ShowToast(toast, 'Info', 'Employee has already been granted gratuity.', 'success')
+            return
+        }
         const res = await CreateSalaryProcess(employee)
         const title = res.isSuccess ? "Success" : "Error"
         const type = res.isSuccess ? "success" : "fail"
@@ -149,7 +149,11 @@ const SalariesTable = (props: EmployeeTableProps) => {
     }
 
     const onEndOfServiceClick = async (employee: EmployeeSalaryProcess) => {
-        const res = await CreateSalaryProcess(employee)
+        const employeeUploadPayload: EmployeeUpdatePayload = {
+            ...employee,
+            isEndOfService: true,
+        }
+        const res = await updateEmployee(employee.id, employeeUploadPayload)
         const title = res.isSuccess ? "Success" : "Error"
         const type = res.isSuccess ? "success" : "fail"
         ShowToast(toast, title, res.message, type)
@@ -218,10 +222,10 @@ const SalariesTable = (props: EmployeeTableProps) => {
                                         </Button>
                                     </TableCell>
                                     <TableCell className="w-20">
-                                        <Input type="number" inputMode="numeric" onChange={(e) => { additionsDebouncedOnChange(employee, e, i) }} />
+                                        <Input type="number" disabled={employee.isEndOfService} inputMode="numeric" onChange={(e) => { additionsDebouncedOnChange(employee, e, i) }} />
                                     </TableCell>
                                     <TableCell className="w-20">
-                                        <Input type="number" inputMode="numeric" onChange={(e) => { deductionsDebouncedOnChange(employee, e, i) }} />
+                                        <Input type="number" disabled={employee.isEndOfService} inputMode="numeric" onChange={(e) => { deductionsDebouncedOnChange(employee, e, i) }} />
                                     </TableCell>
                                     <TableCell className="w-28">
                                         {ToAed.format(+employee.totalSalary)}

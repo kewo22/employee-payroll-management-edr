@@ -18,7 +18,6 @@ import TableLoading from "../../_components/TableLoading";
 const EmployeeTable = (props: EmployeeTableProps) => {
     const { employees, isLoading } = props;
 
-
     const { toast } = useToast();
     const router = useRouter();
 
