@@ -5,10 +5,10 @@ import useSWR from "swr";
 
 import type { Employee } from "@prisma/client";
 
-import { Button } from "@/components/ui/button";
 import EmployeeTable from "./_components/table";
-import { Fetcher } from "@/lib/common";
 import Template from "../_components/Template";
+
+import { Fetcher } from "@/lib/common";
 
 const Employees = () => {
     const router = useRouter();
