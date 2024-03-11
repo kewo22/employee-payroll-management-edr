@@ -20,7 +20,6 @@ const Employees = () => {
             revalidateOnFocus: false,
         }
     );
-    // console.log("🚀 ~ Employees ~ data:", data) 
 
     const onAddEmployeeClick = () => {
         router.push('/employees/add')

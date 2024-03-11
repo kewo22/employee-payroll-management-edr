@@ -16,6 +16,8 @@ const EditEmployee = ({ params }: { params: { id: string } }) => {
         Fetcher,
         {
             revalidateOnFocus: true,
+            revalidateOnMount: true,
+            keepPreviousData: false
         }
     );
 

@@ -6,7 +6,7 @@ import { EmployeeValidatePayload } from '@/app/(dashboard)/employees/_components
 import { StringToDate } from '@/lib/common';
 import { ApiResponse } from '@/types/api-respose';
 import { Employee } from '@prisma/client';
-import { EmployeeUploadPayload } from '@/types/empoyee-update-payload';
+import { EmployeeUpdatePayload } from '@/types/empoyee-update-payload';
 
 export async function createEmployee(employee: EmployeeValidatePayload): Promise<ApiResponse> {
     const employeeObj = {
@@ -14,6 +14,7 @@ export async function createEmployee(employee: EmployeeValidatePayload): Promise
         joiningDate: StringToDate(employee.joiningDate),
         basicSalary: employee.basicSalary,
         salaryAllowance: employee.salaryAllowance,
+        isEndOfService: false
     }
     try {
         await db.employee.create({
@@ -25,20 +26,21 @@ export async function createEmployee(employee: EmployeeValidatePayload): Promise
     }
 }
 
-export async function editEmployee(id: string, employee: EmployeeValidatePayload): Promise<ApiResponse> {
+export async function updateEmployee(employee: Employee, formValues: EmployeeUpdatePayload): Promise<ApiResponse<Employee>> {
     try {
-        await db.employee.update({
+        const updatedEmployee = await db.employee.update({
             where: {
-                id
+                id: employee.id
             },
             data: {
-                name: employee.name,
-                joiningDate: StringToDate(employee.joiningDate),
-                basicSalary: employee.basicSalary,
-                salaryAllowance: employee.salaryAllowance
+                name: formValues.name,
+                joiningDate: formValues.joiningDate,
+                basicSalary: formValues.basicSalary,
+                salaryAllowance: formValues.salaryAllowance,
+                isEndOfService: employee.isEndOfService
             }
         })
-        return { message: `Employee edited successfully`, isSuccess: true };
+        return { message: `Employee edited successfully`, isSuccess: true, data: updatedEmployee };
     } catch (e) {
         return { message: "Failed to edit employee", isSuccess: false };
     }
@@ -57,22 +59,22 @@ export async function DeleteEmployee(id: string): Promise<ApiResponse> {
     }
 }
 
-export async function UpdateEmployee(id: string, data: EmployeeUploadPayload): Promise<ApiResponse<Employee>> {
-    try {
-        const employee = await db.employee.update({
-            where: {
-                id
-            },
-            data: {
-                name: data.name,
-                joiningDate: data.joiningDate,
-                basicSalary: data.basicSalary,
-                salaryAllowance: data.salaryAllowance,
-                processingDate: data.processingDate,
-            }
-        })
-        return { message: `Employee updated successfully`, isSuccess: true, data: employee };
-    } catch (e) {
-        return { message: "Failed to delete employee", isSuccess: false };
-    }
-}
+// export async function UpdateEmployee(id: string, data: EmployeeUpdatePayload): Promise<ApiResponse<Employee>> {
+//     try {
+//         const employee = await db.employee.update({
+//             where: {
+//                 id
+//             },
+//             data: {
+//                 name: data.name,
+//                 joiningDate: data.joiningDate,
+//                 basicSalary: data.basicSalary,
+//                 salaryAllowance: data.salaryAllowance,
+//                 processingDate: data.processingDate,
+//             }
+//         })
+//         return { message: `Employee updated successfully`, isSuccess: true, data: employee };
+//     } catch (e) {
+//         return { message: "Failed to delete employee", isSuccess: false };
+//     }
+// }

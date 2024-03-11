@@ -25,7 +25,7 @@ export default async function RootLayout({
         <aside className="flex-grow bg-red-400 h-full rounded-md max-w-64 min-w-64">
             <SideMenu />
         </aside>
-        <section className="flex-grow bg-white h-full rounded-md">
+        <section className="flex-grow bg-white h-full rounded-md p-10">
             {children}
         </section>
     </main>;

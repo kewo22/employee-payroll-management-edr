@@ -7,13 +7,13 @@ import type { Employee } from "@prisma/client";
 
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 import { ShowToast, ToAed } from "@/lib/common";
 import { EmployeeTableProps } from "@/types/employee-tale-props";
 import { DeleteEmployee } from "@/actions/employee";
+import TableLoading from "../../_components/TableLoading";
 
 const EmployeeTable = (props: EmployeeTableProps) => {
     const { employees, isLoading } = props;
@@ -37,34 +37,15 @@ const EmployeeTable = (props: EmployeeTableProps) => {
 
     if (!employees || !employeesView || isLoading) {
         return (
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        {
-                            headers.map((header, i) => {
-                                return (
-                                    <TableHead key={`header-loader-${i}`}>{header}</TableHead>
-                                )
-                            })
-                        }
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((_, i) => {
-                            return (
-                                <TableRow key={`loader-${i}`}>
-                                    <TableCell><Skeleton className="w-[100px] h-[20px] rounded-full" /></TableCell>
-                                    <TableCell><Skeleton className="w-[100px] h-[20px] rounded-full" /></TableCell>
-                                    <TableCell><Skeleton className="w-[100px] h-[20px] rounded-full" /></TableCell>
-                                    <TableCell><Skeleton className="w-[100px] h-[20px] rounded-full" /></TableCell>
-                                    <TableCell><Skeleton className="w-[100px] h-[20px] rounded-full" /></TableCell>
-                                </TableRow>
-                            )
-                        })
-                    }
-                </TableBody>
-            </Table >
+            <TableLoading headers={headers} />
+        )
+    }
+
+    if (!employees.length || !employeesView.length) {
+        return (
+            <div className="flex items-center justify-center h-full font-bold text-slate-700">
+                No employees added yet !
+            </div>
         )
     }
 

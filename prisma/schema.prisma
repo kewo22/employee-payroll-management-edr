@@ -28,6 +28,7 @@ model Employee {
   salaryAllowance String
   processingDate  DateTime?
   SalaryProcess   SalaryProcess[]
+  isEndOfService  Boolean
 }
 
 model SalaryProcess {

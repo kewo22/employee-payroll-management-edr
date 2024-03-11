@@ -6,9 +6,9 @@ import useSWR from "swr";
 import type { Employee } from "@prisma/client";
 
 import { Fetcher } from "@/lib/common";
-import SalariesTable from "./_components/salaries-table";
+import SalariesTable from "./_components/SalariesTable";
 import Template from "../_components/Template";
-import ProcessedSalariesTable from "./_components/processed-salaries-table";
+import ProcessedSalariesTable from "./_components/ProcessedSalariesTable";
 
 const Salaries = () => {
 

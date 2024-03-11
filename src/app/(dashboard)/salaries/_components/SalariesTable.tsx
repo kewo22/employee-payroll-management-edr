@@ -1,16 +1,15 @@
 "use client";
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import type { Employee, SalaryProcess } from "@prisma/client";
+import type { Employee } from "@prisma/client";
 import debounce from "lodash/debounce";
+import { MoreHorizontal } from "lucide-react";
 
 import { useToast } from "@/components/ui/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
@@ -20,16 +19,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
+import TableLoading from "../../_components/TableLoading";
 
-import { UpdateEmployee } from "@/actions/employee";
+import { updateEmployee } from "@/actions/employee";
+import { CreateSalaryProcess } from "@/actions/salary";
 
 import { EmployeeTableProps } from "@/types/employee-tale-props";
-import { EmployeeUploadPayload } from "@/types/empoyee-update-payload";
+import { EmployeeUpdatePayload } from "@/types/empoyee-update-payload";
 
-import { ShowToast, ToAed } from "@/lib/common";
 import { EmployeeSalaryProcess } from "@/types/employee-salary-process";
-import { MoreHorizontal } from "lucide-react";
-import { CreateSalaryProcess } from "@/actions/salary";
+import { ShowToast, ToAed } from "@/lib/common";
 
 const SalariesTable = (props: EmployeeTableProps) => {
     const { employees, isLoading } = props;
@@ -57,34 +56,7 @@ const SalariesTable = (props: EmployeeTableProps) => {
 
     if (!employees || !employeesView || isLoading) {
         return (
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        {
-                            headers.map((header, i) => {
-                                return (
-                                    <TableHead key={`header-loader-${i}`}>{header}</TableHead>
-                                )
-                            })
-                        }
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((_, i) => {
-                            return (
-                                <TableRow key={`loader-${i}`}>
-                                    <TableCell><Skeleton className="w-[100px] h-[20px] rounded-full" /></TableCell>
-                                    <TableCell><Skeleton className="w-[100px] h-[20px] rounded-full" /></TableCell>
-                                    <TableCell><Skeleton className="w-[100px] h-[20px] rounded-full" /></TableCell>
-                                    <TableCell><Skeleton className="w-[100px] h-[20px] rounded-full" /></TableCell>
-                                    <TableCell><Skeleton className="w-[100px] h-[20px] rounded-full" /></TableCell>
-                                </TableRow>
-                            )
-                        })
-                    }
-                </TableBody>
-            </Table >
+            <TableLoading headers={headers} />
         )
     }
 
@@ -104,14 +76,15 @@ const SalariesTable = (props: EmployeeTableProps) => {
 
     const onSelectSalaryProcessingDate = async () => {
         if (!employeeRef || !employeeRef.current || !processingDate) return
-        const employeeUploadPayload: EmployeeUploadPayload = {
+        const employeeUploadPayload: EmployeeUpdatePayload = {
             basicSalary: employeeRef.current.basicSalary,
             joiningDate: employeeRef.current.joiningDate,
             name: employeeRef.current.name,
             processingDate: processingDate,
             salaryAllowance: employeeRef.current.salaryAllowance,
+            isEndOfService: employeeRef.current.isEndOfService
         }
-        const res = await UpdateEmployee(employeeRef.current.id, employeeUploadPayload)
+        const res = await updateEmployee(employeeRef.current, employeeUploadPayload)
         if (res.isSuccess && res.data) {
             const employeeClone = [...employeesView]
             const foundEmployeeIndex = employees.findIndex(employee => {
@@ -169,7 +142,13 @@ const SalariesTable = (props: EmployeeTableProps) => {
     const deductionsDebouncedOnChange = debounce(onDeductionsChange, 1000);
 
     const onSalaryProcessClick = async (employee: EmployeeSalaryProcess) => {
-        debugger
+        const res = await CreateSalaryProcess(employee)
+        const title = res.isSuccess ? "Success" : "Error"
+        const type = res.isSuccess ? "success" : "fail"
+        ShowToast(toast, title, res.message, type)
+    }
+
+    const onEndOfServiceClick = async (employee: EmployeeSalaryProcess) => {
         const res = await CreateSalaryProcess(employee)
         const title = res.isSuccess ? "Success" : "Error"
         const type = res.isSuccess ? "success" : "fail"
@@ -261,13 +240,11 @@ const SalariesTable = (props: EmployeeTableProps) => {
                                                 <DropdownMenuItem onClick={() => { onSalaryProcessClick(employee) }}>
                                                     Process Salary
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => { onEndOfServiceClick(employee) }}>
                                                     End of service
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
-                                        {/* <Button size="icon" variant="ghost" onClick={() => { onEditClick(employee) }}><PencilIcon className="h-4 w-4" /></Button> */}
-                                        {/* <Button size="icon" variant="destructive" onClick={() => { onDeleteClick(employee) }}><TrashIcon className="h-4 w-4" /></Button> */}
                                     </TableCell>
                                 </TableRow>
                             )

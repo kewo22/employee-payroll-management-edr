@@ -8,7 +8,7 @@ import { DashboardProps } from "@/types/dashboard-template-props";
 export default function Template(props: DashboardProps) {
     const { children, title, actionBtnText, onActionClick } = props;
 
-    const wrapperClasses = cn("p-10")
+    const wrapperClasses = cn("h-full overflow-hidden")
     const titleClasses = cn("text-2xl font-bold")
 
     if (actionBtnText && onActionClick) {

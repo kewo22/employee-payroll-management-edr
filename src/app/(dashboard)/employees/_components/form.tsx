@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
 
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -19,10 +19,11 @@ import {
 } from "@/components/ui/form";
 
 import { EmployeeSchema } from "@/lib/validation-schemas";
-import { createEmployee, editEmployee } from "@/actions/employee";
+import { createEmployee, updateEmployee } from "@/actions/employee";
 
 import { EmployeeFormProps } from "@/types/employee-form-props";
-import { DateToShadInputString, ShowToast } from "@/lib/common";
+import { DateToShadInputString, ShowToast, StringToDate } from "@/lib/common";
+import { EmployeeUpdatePayload } from "@/types/empoyee-update-payload";
 
 export type EmployeeValidatePayload = z.infer<typeof EmployeeSchema>;
 
@@ -73,7 +74,15 @@ const EmployeeForm = (props: EmployeeFormProps) => {
             return;
         }
         if (!employee) return
-        const res = await editEmployee(employee.id, values)
+        const employeeUpdatePayload: EmployeeUpdatePayload = {
+            basicSalary: values.basicSalary,
+            isEndOfService: employee.isEndOfService,
+            joiningDate: StringToDate(values.joiningDate),
+            name: values.name,
+            processingDate: employee.processingDate,
+            salaryAllowance: values.salaryAllowance
+        }
+        const res = await updateEmployee(employee, employeeUpdatePayload)
         const title = res.isSuccess ? "Success" : "Error"
         const type = res.isSuccess ? "success" : "fail"
         ShowToast(toast, title, res.message, type)
